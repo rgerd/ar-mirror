@@ -17,22 +17,22 @@ eye_cascade = cv.CascadeClassifier('haarcascade_eye.xml')
 while(True):
     # Capture frame-by-frame
     ret, frame = cap.read()
+    frame = cv.flip(frame, +1)
 
     gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-
     if frame is None or gray is None:
         continue
 
     faces = face_cascade.detectMultiScale(gray, 1.3, 5)
     for (x,y,w,h) in faces:
         cv.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),2)
-        
+
         roi_gray = gray[y:y+h, x:x+w]
         roi_color = frame[y:y+h, x:x+w]
-        
-        eyes = eye_cascade.detectMultiScale(roi_gray)
-        for (ex,ey,ew,eh) in eyes:
-            cv.rectangle(roi_color, (ex,ey), (ex+ew,ey+eh), (0,255,0), 2)
+
+        # eyes = eye_cascade.detectMultiScale(roi_gray)
+        # for (ex,ey,ew,eh) in eyes:
+        #    cv.rectangle(roi_color, (ex,ey), (ex+ew,ey+eh), (0,255,0), 2)
 
     # Display the resulting frame
     cv.imshow('frame', frame)
