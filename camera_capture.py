@@ -20,6 +20,7 @@ faces = []
 while(True):
     # Capture frame-by-frame
     ret, frame = cap.read()
+    frame = cv.flip(frame, +1)
 
     gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
