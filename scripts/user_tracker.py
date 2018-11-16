@@ -4,7 +4,7 @@ import numpy as np
 import cv2 as cv
 from face import Face
 
-camera = cv.Videocamerature(0)
+camera = cv.VideoCapture(0)
 
 # Define min window size to be recognized as a face
 minW = 0.1*camera.get(3)
