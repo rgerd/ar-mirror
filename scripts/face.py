@@ -36,7 +36,6 @@ class Face:
 
             self.position.z = 1 - (((lx + lw / 2) - (rx + rw / 2)) / PIXELS_AT_STANDARD_DIST)
 
-
     def get_distance_color(self):
         face_dist = self.position.z
 
@@ -45,16 +44,3 @@ class Face:
         perfectness = 1 - min(np.square(face_dist) * 2, 1)
 
         return (int(farness * 255),int(perfectness * 255),int(closeness * 255))
-
-
-
-    # def detect_eyes(self, gray_face):        
-    #     roi_gray = gray_face[y:y+int(self.bounding_rect[3] * 0.6), x:x+]
-    #     roi_color = frame[y:y+h, x:x+w]
-        
-    #     new_eyes = eye_cascade.detectMultiScale(roi_gray)
-
-
-
-    #     for (ex,ey,ew,eh) in eyes:
-    #         cv.rectangle(roi_color, (ex,ey), (ex+ew,ey+eh), (0,255,0), 2)

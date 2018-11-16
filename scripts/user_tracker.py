@@ -1,23 +1,14 @@
-# A sample script for running haar cascades on
-# the video feed from the built-in camera.
-
-# Tutorials:
-# https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_gui/py_video_display/py_video_display.html
-# https://docs.opencv.org/3.4.3/d7/d8b/tutorial_py_face_detection.html
-# https://github.com/opencv/opencv/tree/master/data/haarcascades
-
-
 ## DETERMINED REASONABLE EYE DISTANCE @ 1D: 100px
 
 import numpy as np
 import cv2 as cv
 from face import Face
 
-cap = cv.VideoCapture(0)
+camera = cv.Videocamerature(0)
 
 # Define min window size to be recognized as a face
-minW = 0.1*cap.get(3)
-minH = 0.1*cap.get(4)
+minW = 0.1*camera.get(3)
+minH = 0.1*camera.get(4)
 
 recognizer = cv.face.LBPHFaceRecognizer_create()
 recognizer.read('data/trainer/trainer.yml')
@@ -33,7 +24,7 @@ users = [ Face(), Face() ] # One for each user
 
 while(True):
     # Capture frame-by-frame
-    ret, frame = cap.read()
+    ret, frame = camera.read()
 
     gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
@@ -63,13 +54,13 @@ while(True):
             2)
 
         cv.putText(frame, str(names[id]), (fx+5,fy-5), font, 1, (255,255,255), 2)
-        cv.putText(frame, str(confidence), (fx+5,fy+fh-5), font, 1, (255,255,0), 1)
+        # cv.putText(frame, str(confidence), (fx+5,fy+fh-5), font, 1, (255,255,0), 1)
 
     # Display the resulting frame
     cv.imshow('frame', frame)
     if cv.waitKey(1) & 0xFF == ord('q'):
         break
 
-# When everything done, release the capture
-cap.release()
+# When everything done, release the camera
+camera.release()
 cv.destroyAllWindows()
