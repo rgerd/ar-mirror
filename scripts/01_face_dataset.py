@@ -2,7 +2,7 @@ import cv2
 import os
 cam = cv2.VideoCapture(0)
 
-face_detector = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+face_detector = cv2.CascadeClassifier('data/haarcascade_frontalface_default.xml')
 
 # For each person, enter one numeric face id
 face_id = input('\n enter user id end press <return> ==>  ')
@@ -30,7 +30,7 @@ while(True):
     k = cv2.waitKey(100) & 0xff # Press 'ESC' for exiting video
     if k == 27:
         break
-    elif count >= 30: # Take 30 face sample and stop video
+    elif count >= 120: # Take 120 face sample and stop video
          break
 
 # Do a bit of cleanup
