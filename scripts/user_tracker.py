@@ -18,8 +18,6 @@ face_cascade = cv.CascadeClassifier('data/haarcascade_frontalface_default.xml')
 
 font = cv.FONT_HERSHEY_SIMPLEX
 
-face_dist = 1
-
 names = ['Jared', 'Unknown', 'Kristy']
 users = [ Face() ] * len(names) # One for each user
 
@@ -51,7 +49,6 @@ while(True):
 
         face = users[id]
         face.observe(detected_face, face_img)
-        pos = face.kposition.value()
 
         # render face display
         color = face.get_distance_color()
@@ -59,18 +56,20 @@ while(True):
         # observation
         cv.rectangle(
             background,
-            (detected_face[0],detected_face[1]),
-            (detected_face[0]+detected_face[2],detected_face[1]+detected_face[3]),
-            (255, 255, 255),
-            2)
-
-        # kalman prediction
-        cv.rectangle(
-            background,
-            (pos[0],pos[1]),
-            (pos[0]+detected_face[2],pos[1]+detected_face[3]),
+            (fx,fy),
+            (fx+fw,fy+fh),
             color,
             2)
+
+        # filtered position x, y, z
+        # fpx, fpy, fpz = face.filtered_position.value()
+        # kalman prediction
+        # cv.rectangle(
+        #     background,
+        #     (int(fpx), int(fpy)),
+        #     (int(fpx+fw), int(fpy+fh)),
+        #     color,
+        #     2)
 
         cv.putText(background, str(names[id]), (fx+5,fy-5), font, 1, (255,255,255), 2)
         # cv.putText(frame, str(confidence), (fx+5,fy+fh-5), font, 1, (255,255,0), 1)
