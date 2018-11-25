@@ -7,7 +7,7 @@ import datetime
 import matplotlib.pyplot as plt
 from keras.models import load_model
 
-PIXELS_AT_STANDARD_DIST = 100.
+PIXELS_AT_STANDARD_DIST = 1.
 eye_cascade = cv.CascadeClassifier('data/haarcascade_eye.xml')
 model = load_model('keypoints_model.h5')
 
@@ -47,10 +47,8 @@ class Face:
             resize_gray_crop = cv.resize(face_img, (96, 96)) / 255
             landmarks = np.squeeze(model.predict(
                 np.expand_dims(np.expand_dims(resize_gray_crop, axis=-1), axis=0)))
-            landmarks[0::2] = (landmarks[0::2] * 48 + 48) * (fx / 96.)
-            landmarks[1::2] = (landmarks[1::2] * 48 + 48) * (fy / 96.)
             (rx, ry, lx, ly) = landmarks[0:4]
-            z = -(1 + ((lx - rx) / PIXELS_AT_STANDARD_DIST))
+            z = 1 - (((rx - lx) * (fw / 96.)))
             return z
 
         # z_1 = cascade()
@@ -61,8 +59,11 @@ class Face:
         self.measured_position.z = z
         self.filtered_position.observe(time.time(), self.measured_position)
 
-    def get_distance_color(self):
-        (face_x, face_y, face_dist) = self.filtered_position.value()
+    def get_distance_color(self, filter=False):
+        if filter:
+            (_, _, face_dist) = self.filtered_position.value()
+        else:
+            face_dist = self.measured_position.z
 
         closeness = min(-min(0, face_dist * 2), 1)
         farness = min(max(0, face_dist * 2), 1)

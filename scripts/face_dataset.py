@@ -23,7 +23,7 @@ while(True):
         count += 1
 
         # Save the captured image to the datasets folder
-        cv2.imwrite("dataset/" + str(face_id) + '.' + str(count) + ".jpg", gray[y:y+h,x:x+w])
+        cv2.imwrite("data/dataset/" + str(face_id) + '.' + str(count) + ".jpg", gray[y:y+h,x:x+w])
         cv2.imshow('image', img)
 
     k = cv2.waitKey(100) & 0xff # Press 'ESC' to exit data collection
