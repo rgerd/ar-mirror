@@ -2,9 +2,14 @@ import numpy as np
 import cv2 as cv
 from position import Position, KalmanPosition
 import time
+import datetime
+
+import matplotlib.pyplot as plt
+from keras.models import load_model
 
 PIXELS_AT_STANDARD_DIST = 100.
 eye_cascade = cv.CascadeClassifier('data/haarcascade_eye.xml')
+model = load_model('keypoints_model.h5')
 
 class Face:
     def __init__(self):
@@ -16,26 +21,44 @@ class Face:
         self.bounding_rect = face
 
         (fx, fy, fw, fh) = face
+
+        # EYE CASCADE METHOD
+        def cascade():
+            top_offset = int(fh * 0.2)
+            height_offset = int(fh * 0.5)
+
+            cropped_frame = face_img[top_offset:height_offset, :]
+
+            eyes = eye_cascade.detectMultiScale(cropped_frame)
+
+            z = None
+            if len(eyes) == 2:
+                left_eye  = eyes[0] if eyes[0][0] > eyes[1][0] else eyes[1]
+                right_eye = eyes[0] if eyes[0][0] < eyes[1][0] else eyes[1]
+
+                (lx, ly, lw, lh) = left_eye
+                (rx, ry, rw, rh) = right_eye
+
+                z = 1 - (((lx + lw / 2) - (rx + rw / 2)) / PIXELS_AT_STANDARD_DIST)
+            return z # z = 0 @ when user is at standard distance
+
+        # TRAINED KEY FEATURE METHOD
+        def key_feature():
+            resize_gray_crop = cv.resize(face_img, (96, 96)) / 255
+            landmarks = np.squeeze(model.predict(
+                np.expand_dims(np.expand_dims(resize_gray_crop, axis=-1), axis=0)))
+            landmarks[0::2] = (landmarks[0::2] * 48 + 48) * (fx / 96.)
+            landmarks[1::2] = (landmarks[1::2] * 48 + 48) * (fy / 96.)
+            (rx, ry, lx, ly) = landmarks[0:4]
+            z = -(1 + ((lx - rx) / PIXELS_AT_STANDARD_DIST))
+            return z
+
+        # z_1 = cascade()
+        z = round(key_feature(), 3)
+
         self.measured_position.x = fx
         self.measured_position.y = fy
-
-        top_offset = int(fh * 0.2)
-        height_offset = int(fh * 0.5)
-
-        cropped_frame = face_img[top_offset:height_offset, :]
-
-        eyes = eye_cascade.detectMultiScale(cropped_frame)
-
-        if len(eyes) == 2:
-          left_eye  = eyes[0] if eyes[0][0] > eyes[1][0] else eyes[1]
-          right_eye = eyes[0] if eyes[0][0] < eyes[1][0] else eyes[1]
-
-          (lx, ly, lw, lh) = left_eye
-          (rx, ry, rw, rh) = right_eye
-
-          z = 1 - (((lx + lw / 2) - (rx + rw / 2)) / PIXELS_AT_STANDARD_DIST)
-          self.measured_position.z = z # z = 0 @ when user is at standard distance
-
+        self.measured_position.z = z
         self.filtered_position.observe(time.time(), self.measured_position)
 
     def get_distance_color(self):

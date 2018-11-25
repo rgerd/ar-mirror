@@ -29,16 +29,16 @@ class KalmanPosition():
         self.initialize_values()
 
     def _predict_step(self, mu, Sigma, A, R):
-        predicted_mu = A @ mu #9x1
-        predicted_sigma = ((A @ Sigma) @ A.T) + R #9x9
+        predicted_mu = np.dot(A, mu) #9x1
+        predicted_sigma = np.dot(np.dot(A, Sigma), A.T) + R #9x9
         return predicted_mu, predicted_sigma
 
     def _measurement_update_step(self, pred_mu, pred_Sigma, z, C, Q):
-        K_l = pred_Sigma @ C.T
-        K_r = np.linalg.inv(((C @ pred_Sigma) @ C.T) + Q)
-        K = K_l @ K_r
-        corrected_mu = pred_mu + (K @ (z - (C @ pred_mu)))
-        corrected_sigma = (np.identity(K.shape[0]) - (K @ C)) @ pred_Sigma
+        K_l = np.dot(pred_Sigma, C.T)
+        K_r = np.linalg.inv(np.dot(np.dot(C, pred_Sigma), C.T) + Q)
+        K = np.dot(K_l, K_r)
+        corrected_mu = pred_mu + np.dot(K, (z - np.dot(C, pred_mu)))
+        corrected_sigma = np.dot((np.identity(K.shape[0]) - np.dot(K, C)), pred_Sigma)
         return corrected_mu, corrected_sigma
 
     def observe(self, ts, position):
@@ -72,6 +72,8 @@ class KalmanPosition():
             self.mu, self.Sigma = self._measurement_update_step(self.mu, self.Sigma, z, self.C, self.Q)
 
     def value(self):
+        if self.mu is None:
+            return (0, 0, 0)
         return (self.mu[0][0], self.mu[1][0], self.mu[2][0])
 
     def assemble_A_matrix(self, delta_t):
