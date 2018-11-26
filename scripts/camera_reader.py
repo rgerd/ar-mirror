@@ -4,13 +4,14 @@ import numpy as np
 import cv2 as cv
 
 class CameraReader:
-    def __init__(self):
+    def __init__(self, convert_gray):
         self.camera = cv.VideoCapture(0)
         
-        self.width = self.camera.get(3)
-        self.height = self.camera.get(4)
+        self.width = int(self.camera.get(3))
+        self.height = int(self.camera.get(4))
 
         self.frame = None
+        self.convert_gray = convert_gray
 
         self.thread = Thread(target=self._read_camera)
         self.thread.daemon = True
@@ -31,8 +32,9 @@ class CameraReader:
         while self.reading:
             ret, frame = self.camera.read()
             frame = cv.flip(frame, +1)
-            gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-            self.frame = gray
+            if self.convert_gray:
+                frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+            self.frame = frame
 
     def get_frame(self):
         frame = self.frame

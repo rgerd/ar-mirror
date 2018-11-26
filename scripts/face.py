@@ -15,6 +15,7 @@ class Face:
     def __init__(self):
         self.bounding_rect = None
         self.measured_position = Position(0, 0, 0)
+        self.measured_size = (0, 0)
         self.filtered_position = KalmanPosition()
 
     def observe(self, face, face_img):
@@ -48,7 +49,8 @@ class Face:
             landmarks = np.squeeze(model.predict(
                 np.expand_dims(np.expand_dims(resize_gray_crop, axis=-1), axis=0)))
             (rx, ry, lx, ly) = landmarks[0:4]
-            z = 3 - (((rx - lx) * (fw / 96.)))
+            # z = 3 - (((rx - lx) * (fw / 96.)))
+            z = 1 - ((lx - rx) / PIXELS_AT_STANDARD_DIST)
             return z
 
         # z_1 = cascade()
@@ -57,6 +59,7 @@ class Face:
         self.measured_position.x = fx
         self.measured_position.y = fy
         self.measured_position.z = z
+        self.measured_size = (int(fw), int(fh))
         self.filtered_position.observe(time.time(), self.measured_position)
 
     def get_distance_color(self, filter=False):
