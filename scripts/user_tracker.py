@@ -1,5 +1,4 @@
 ## DETERMINED REASONABLE EYE DISTANCE @ 1D: 100px
-
 import numpy as np
 import cv2 as cv
 from face import Face
@@ -38,7 +37,7 @@ def center_frame_to_pixel(point):
 def mirror_point(perspective, location):
     if perspective[2] <= 0:
         print('invalid perspective: face is behind the mirror')
-        return
+        return (0,0)
     if location[2] > 0:
         print('invalid location: positive z position for location... flipping sign')
         location[2] = -location[2]
@@ -110,8 +109,9 @@ def main_loop():
         y += fw / 3.
         cv.circle(background, (int(x), int(y)), 5, filtered_color, 2)
 
+        point = [0, 0, -2] # center of mirror with depth of 10
         perspective = pixel_to_center_frame([x,y,z])
-        static_x, static_y = mirror_point(perspective, [100,-100,-1])
+        static_x, static_y = mirror_point(perspective, point)
         cv.circle(background, (int(static_x), int(static_y)), 5, (255, 255, 255), 2)
 
         cv.putText(background, str(names[id]), (fx+5,fy-5), font, 1, (255,255,255), 2)
