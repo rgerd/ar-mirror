@@ -30,14 +30,14 @@ class KalmanPosition():
 
     def _predict_step(self, mu, Sigma, A, R):
         predicted_mu = A @ mu #9x1
-        predicted_sigma = (A @ Sigma) @ A.T) + R #9x9
+        predicted_sigma = (A @ Sigma) @ A.T + R #9x9
         return predicted_mu, predicted_sigma
 
     def _measurement_update_step(self, pred_mu, pred_Sigma, z, C, Q):
         K_l = pred_Sigma @ C.T
-        K_r = np.linalg.inv((C @ pred_Sigma) @ C.T) + Q)
+        K_r = np.linalg.inv(((C @ pred_Sigma) @ C.T) + Q)
         K = K_l @ K_r
-        corrected_mu = pred_mu + K @ (z - (C @ pred_mu)))
+        corrected_mu = pred_mu + K @ (z - (C @ pred_mu))
         corrected_sigma = (np.identity(K.shape[0]) - (K @ C)) @ pred_Sigma
         return corrected_mu, corrected_sigma
 
