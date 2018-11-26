@@ -45,12 +45,10 @@ def mirror_point(perspective, location):
     # calculate for z = 0
     (px, py, pz) = perspective
     (lx, ly, lz) = location
-
     x = px - ((px - lx) / float(pz - lz)) * pz
     y = py - ((py - ly) / float(pz - lz)) * pz
 
     return center_frame_to_pixel([x, y])
-    # return [x,y]
 
 def main_loop():
     # Capture frame-by-frame
