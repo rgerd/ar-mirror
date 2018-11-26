@@ -48,7 +48,7 @@ class Face:
             landmarks = np.squeeze(model.predict(
                 np.expand_dims(np.expand_dims(resize_gray_crop, axis=-1), axis=0)))
             (rx, ry, lx, ly) = landmarks[0:4]
-            z = 1 - (((rx - lx) * (fw / 96.)))
+            z = 3 - (((rx - lx) * (fw / 96.)))
             return z
 
         # z_1 = cascade()
