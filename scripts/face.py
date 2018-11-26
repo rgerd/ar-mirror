@@ -4,7 +4,7 @@ from position import Position, KalmanPosition
 import time
 import datetime
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from keras.models import load_model
 
 PIXELS_AT_STANDARD_DIST = 1.
