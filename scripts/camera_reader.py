@@ -6,7 +6,7 @@ import cv2 as cv
 class CameraReader:
     def __init__(self, convert_gray):
         self.camera = cv.VideoCapture(0)
-        
+
         self.width = int(self.camera.get(3))
         self.height = int(self.camera.get(4))
 
@@ -23,7 +23,7 @@ class CameraReader:
     def end_reading(self):
         self.reading = False
         time.sleep(1) # Make sure the thread ends
-        camera.release()
+        self.camera.release()
 
     def get_img_dimensions(self):
         return (self.width, self.height)
