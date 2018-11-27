@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 import sys
 
-import matplotlib.pyplot as plt
 from keras.models import load_model
 
 face_cascade = cv2.CascadeClassifier('data/haarcascade_frontalface_default.xml')
