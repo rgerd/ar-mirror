@@ -18,10 +18,11 @@ class Face:
         self.measured_size = (0, 0)
         self.filtered_position = KalmanPosition()
 
-    def observe(self, face, face_img):
-        self.bounding_rect = face
+    def observe(self, frame_dim, face_rect, face_img):
+        self.bounding_rect = face_rect
 
-        (fx, fy, fw, fh) = face
+        frame_width, frame_height = frame_dim
+        (fx, fy, fw, fh) = face_rect
 
         # EYE CASCADE METHOD
         def cascade():
@@ -49,16 +50,26 @@ class Face:
             landmarks = np.squeeze(model.predict(
                 np.expand_dims(np.expand_dims(resize_gray_crop, axis=-1), axis=0)))
             (rx, ry, lx, ly) = landmarks[0:4]
-            # z = 3 - (((rx - lx) * (fw / 96.)))
-            z = 1 - ((lx - rx) / PIXELS_AT_STANDARD_DIST)
-            return z
+            
+            # 500 is around the closest I could get to the mirror before it stopped detecting my face
+            # 100 just felt like a good round number
+            # Multiply by width since rx and lx come from a scaled image
+            z = (500 - (rx - lx) * fw) / 100
 
-        # z_1 = cascade()
-        z = round(key_feature(), 3)
+            # Center x, y of face
+            _cx = (rx + lx) / 2
+            _cy = (ry + ly) / 2
+            cx = int((_cx * 48 + 48) * fw / 96. + fx)
+            cy = int((_cy * 48 + 48) * fh / 96. + fy)
 
-        self.measured_position.x = fx
-        self.measured_position.y = fy
-        self.measured_position.z = z
+            # 300 is to make a movement along the x/y axes feel similar to a movement along the z axis
+            # Dividing by 100 just didn't seem like enough on these values (everything is arbitary)
+            x =  (cx - frame_width / 2) / 300 * z
+            y = -(cy - frame_height / 2) / 300 * z
+
+            return Position(x, y, z)
+
+        self.measured_position = key_feature()
         self.measured_size = (int(fw), int(fh))
         self.filtered_position.observe(time.time(), self.measured_position)
 
@@ -67,6 +78,8 @@ class Face:
             (_, _, face_dist) = self.filtered_position.value()
         else:
             face_dist = self.measured_position.z
+
+        face_dist = face_dist - 3 # Pretty standard distance
 
         closeness = min(-min(0, face_dist * 2), 1)
         farness = min(max(0, face_dist * 2), 1)
