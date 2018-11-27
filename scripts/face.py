@@ -54,7 +54,7 @@ class Face:
             # 500 is around the closest I could get to the mirror before it stopped detecting my face
             # 100 just felt like a good round number
             # Multiply by width since rx and lx come from a scaled image
-            z = (500 - (rx - lx) * fw) / 100
+            z = (500 - (rx - lx) * fw) / 50
 
             # Center x, y of face
             _cx = (rx + lx) / 2
