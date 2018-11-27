@@ -1,4 +1,3 @@
-## DETERMINED REASONABLE EYE DISTANCE @ 1D: 100px
 import numpy as np
 import cv2 as cv
 from face import Face
@@ -65,7 +64,7 @@ def update_face(image, min_size):
            return updated_face_id
 
         detected_user = users[id]
-        detected_user.observe(detected_face, face_img)
+        detected_user.observe((image.shape[1], image.shape[0]), detected_face, face_img)
         updated_face_id = id
 
     return updated_face_id
