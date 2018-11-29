@@ -97,6 +97,10 @@ def main_loop(camera, mirror_mode):
     if frame is None: # Wait for next frame
         return
 
+    camera_fps = camera.get_fps()
+
+    time_start = time.time()
+
     image_width, image_height = camera.get_img_dimensions()
     # Define min window size to be recognized as a face
     min_face_size = (int(0.05 * image_width), int(0.05 * image_height))
@@ -116,14 +120,20 @@ def main_loop(camera, mirror_mode):
 
     # Display the resulting frame
     # frame = cv.resize(frame, (0,0), fx=1.4, fy=1.4)
-    cv.imshow('window', frame)
+    cv.imshow('mirror', frame)
+
+    print(camera_fps, int(1 / (time.time() - time_start)))
 
 if __name__ == "__main__":
     mirror_mode = '--mirror' in sys.argv
 
+    cv.startWindowThread()
+    cv.namedWindow('mirror')
+
     camera = CameraReader(mirror_mode)
 
     camera.begin_reading()
+
     while True:
         main_loop(camera, mirror_mode)
         if cv.waitKey(1) & 0xFF == ord('q'):

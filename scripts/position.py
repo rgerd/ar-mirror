@@ -6,6 +6,21 @@ class Position:
         self.y = y
         self.z = z
 
+    def value(self):
+        return (self.x, self.y, self.z)
+
+    def dist(self, other):
+        return Position(other.x - self.x, other.y - self.y, other.z - self.z)
+
+    def update(self, target, amt):
+        _amt = 1 - amt
+        return Position(
+            target.x * amt + self.x * _amt,
+            target.y * amt + self.y * _amt,
+            target.z * amt + self.z * _amt
+        )
+
+
     def __str__(self):
         return "[ {0.x}, {0.y}, {0.z} ]".format(self)
 

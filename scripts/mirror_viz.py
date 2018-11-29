@@ -33,7 +33,7 @@ def update_face(image, min_size):
         id, confidence = recognizer.predict(face_img)
 
         if confidence >= 100: # Unknown face
-           return updated_face_id
+            id = 0
 
         detected_user = users[id]
         detected_user.observe((image.shape[1], image.shape[0]), detected_face, face_img)
@@ -50,7 +50,7 @@ def render_ui(user, user_name, screen):
     filtered_color = user.get_distance_color(filter=True)
 
     # calculate perspective (assuming camera is center of mirror)
-    (x, y, z) = user.filtered_position.value()
+    (x, y, z) = user.predicted_position.value()
 
     # The mirror
     cv.line(
@@ -69,16 +69,12 @@ def main_loop(camera, mirror_mode):
     if frame is None: # Wait for next frame
         return
 
-    image_width, image_height = camera.get_img_dimensions()
+    gray = frame
+    frame = np.zeros((720, 1280, 3)) # Blank color image
+
     # Define min window size to be recognized as a face
+    image_width, image_height = camera.get_img_dimensions()
     min_face_size = (int(0.05 * image_width), int(0.05 * image_height))
-
-    if mirror_mode:
-        gray = frame
-        frame = np.zeros((image_height, image_width, 3)) # Blank color image
-    else:
-        gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-
     user_id = update_face(gray, min_face_size)
 
     if user_id is None:
