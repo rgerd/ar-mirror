@@ -73,14 +73,17 @@ class Face:
         # Faces are typically taller than they are wide, so we'll probably hit fh > frame_height first
         face_size = fh / frame_height
 
-        z = (1.0 - face_size) * 10
+        z = (1.0 - face_size) * 32
+    
+        # my estimation 5.5, internet: 7.1
+        cam_focal_length = 300.
 
         # Center x, y of face
         cx = fx + fw / 2
         cy = fy + fh / 2
 
-        x =  (cx - frame_width / 2) / frame_height * z
-        y = -(cy - frame_height / 2) / frame_height * z
+        x =  (cx - frame_width / 2) * z / cam_focal_length
+        y = -(cy - frame_height / 2) * z / cam_focal_length
 
         x = round(x, 2)
         y = round(y, 2)
