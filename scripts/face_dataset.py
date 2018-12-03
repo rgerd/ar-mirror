@@ -31,7 +31,7 @@ while(True):
     k = cv2.waitKey(100) & 0xff # Press 'ESC' to exit data collection
     if k == 27:
         break
-    elif count >= 40:
+    elif count >= 100:
          break
 
 # Do a bit of cleanup

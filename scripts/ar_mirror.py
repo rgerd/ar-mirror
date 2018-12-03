@@ -21,21 +21,37 @@ users = [Face('Jared', 0),
          Face('Robert', 0),
          Face('Unknown', 0)]
 
+user_color = (0, 0, 0)
+current_user = None
+current_user_id = None
+frames_on_new_user = 0
+
 def main_loop(camera):
+    global users, current_user_id, current_user, frames_on_new_user
+
     frame = camera.get_frame()
     if frame is None: # Wait for next frame
         return
 
-    user_id = update_faces(frame, MIN_FACE_SIZE)
-
     screen = np.zeros((RENDER_SIZE[1], RENDER_SIZE[0], 3), dtype=np.uint8)
     # cv.rectangle(screen, (0, 0), (RENDER_SIZE[0] - 2, RENDER_SIZE[1] - 2), (255, 255, 255), 3)
+
+    user_id = update_faces(frame, MIN_FACE_SIZE)
     
     if user_id is not None:
-        user = users[user_id]
-        # calculate perspective (assuming camera is center of mirror)
-        render_ar(screen, PPI, user)
-        render_ui(screen, user.get_color())
+        if user_id == current_user_id:
+            frames_on_new_user = 0
+        else:
+            frames_on_new_user += 1
+
+        if frames_on_new_user >= 8:
+            current_user_id = user_id
+            current_user = users[user_id]
+            frames_on_new_user = 0
+        
+    if current_user_id is not None:
+        render_ar(screen, PPI, current_user)    
+        render_ui(screen, current_user.get_color())
 
     # display
     screen = cv.resize(screen, SCREEN_SIZE, interpolation=0)
@@ -71,7 +87,6 @@ def update_faces(image, min_size):
        )
 
     if len(faces) == 0: 
-        print("No faces!")
         return None
 
     fattest_face_id = None
@@ -81,18 +96,16 @@ def update_faces(image, min_size):
         (fx, fy, fw, fh) = frame
         face_img = image[fy:fy+fh,fx:fx+fw]
 
-        id, confidence = recognizer.predict(face_img)
-        if confidence <= 100: # Known face
-            if fw >= fattest_face_fatness:
-                fattest_face_id = id
-                fattest_face_fatness = fw
-            detected_user = users[id]
-            detected_user.observe((image.shape[1], image.shape[0]), frame, face_img)
-            updated_face_id = id
-        else:
-            print("Stranger danger!")
+        id, _ = recognizer.predict(face_img)
 
-    return fattest_face_id # np.argmax(faces[:,2])
+        if fw >= fattest_face_fatness:
+            fattest_face_id = id
+            fattest_face_fatness = fw
+        detected_user = users[id]
+        detected_user.observe((image.shape[1], image.shape[0]), frame, face_img)
+        updated_face_id = id
+        
+    return fattest_face_id
 
 if __name__ == "__main__":
     local_mode = '--local' in sys.argv
