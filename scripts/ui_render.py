@@ -3,11 +3,13 @@ from time import gmtime, strftime
 
 def render_ui(screen):
     screen_height, screen_width, _ = screen.shape
-    render_clock(screen, 10, 100)
+    render_clock(screen, 25, 200)
 
 def render_clock(screen, x, y):
     date_time = strftime("%a, %d %b %Y", gmtime())
     clock_time = strftime("%H:%M:%S", gmtime())
+
+    # cv.circle(screen, (x + 40, y - 100))
 
     cv.putText(screen, clock_time,
         (x, y), cv.FONT_HERSHEY_SIMPLEX,

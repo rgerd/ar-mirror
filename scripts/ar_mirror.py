@@ -4,7 +4,7 @@ from camera_reader import CameraReader
 from ui_render import render_ui
 
 RENDER_SIZE = (640, 400)
-SCREEN_SIZE = (1080, 800) # 1920
+SCREEN_SIZE = (1080, 1700)
 
 def main_loop(camera):
     frame = camera.get_frame()
@@ -14,6 +14,8 @@ def main_loop(camera):
 
     screen = np.zeros((RENDER_SIZE[1], RENDER_SIZE[0], 3), dtype=np.uint8)  
     render_ui(screen)
+    
+    cv.rectangle(screen, (0, 0), (RENDER_SIZE[0] - 2, RENDER_SIZE[1] - 2), (255, 255, 255), 3)
 
     screen = cv.resize(screen, SCREEN_SIZE, interpolation=0)
 
