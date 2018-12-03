@@ -23,7 +23,7 @@ if __name__ == "__main__":
     cv.startWindowThread()
     cv.namedWindow('image')
     cv.setWindowProperty('image', 0, 1)
-    cv.moveWindow('image', -SCREEN_SIZE[0], 0)
+    cv.moveWindow('image', 0, -SCREEN_SIZE[1])
 
     camera = CameraReader(True)
 
