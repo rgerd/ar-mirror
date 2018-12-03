@@ -3,7 +3,6 @@ import cv2 as cv
 def render_ar(screen, PPI, user):
     screen_height, screen_width, _ = screen.shape
     perspective = list(user.predicted_position.value())
-    print(perspective)
     # fw, fh = user.measured_size
 
     obj = list(perspective)
