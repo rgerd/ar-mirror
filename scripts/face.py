@@ -15,6 +15,7 @@ class Face:
     def __init__(self):
         self.bounding_rect = None
         self.measured_position = Position(0, 0, 0)
+        self.predicted_position = Position(0, 0, 0)
         self.measured_size = (0, 0)
         self.filtered_position = KalmanPosition()
         self.nose = (0, 0)
@@ -35,13 +36,13 @@ class Face:
         face_size = fh / frame_height
 
         z = (1.0 - face_size) * 32
-    
+
         # my estimation 5.5, internet: 7.1
         cam_focal_length = 300.
 
         # Center x, y of face
         cx = fx + fw / 2
-        cy = fy + fh / 2
+        cy = fy + fh / 3
 
         x =  (cx - frame_width / 2) * z / cam_focal_length
         y = -(cy - frame_height / 2) * z / cam_focal_length

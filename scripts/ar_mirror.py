@@ -10,12 +10,13 @@ SCREEN_SIZE = (1080, 1530)
 
 WIDTH, HEIGHT = CameraReader(True).get_img_dimensions()
 MIN_FACE_SIZE = (int(0.05 * WIDTH), int(0.05 * HEIGHT))
+PPI = 58.524
 
 recognizer = cv.face.LBPHFaceRecognizer_create()
 recognizer.read('data/trainer/trainer.yml')
 face_cascade = cv.CascadeClassifier('data/haarcascade_frontalface_default.xml')
 
-names = ['Jared', 'Kristy', 'Unknown']
+names = ['Jared', 'Robert', 'Unknown']
 users = [Face(), Face(), Face()]
 
 def main_loop(camera):
@@ -24,15 +25,15 @@ def main_loop(camera):
         return
 
     user_id = update_face(frame, MIN_FACE_SIZE)
-    if user_id is None:
-        return
 
     # render
     screen = np.zeros((RENDER_SIZE[1], RENDER_SIZE[0], 3), dtype=np.uint8)
     cv.rectangle(screen, (0, 0), (RENDER_SIZE[0] - 2, RENDER_SIZE[1] - 2), (255, 255, 255), 3)
     render_ui(screen)
     if user_id is not None:
-        render_ar(screen)
+        user = users[user_id]
+        # calculate perspective (assuming camera is center of mirror)
+        render_ar(screen, PPI, user)
 
     # display
     screen = cv.resize(screen, SCREEN_SIZE, interpolation=0)
@@ -48,21 +49,21 @@ def update_face(image, min_size):
         minSize = min_size,
        )
 
-    if len(faces) != 0:
-        detected_face = max(faces, key=lambda f: f[2])
-        (fx, fy, fw, fh) = detected_face
+    if len(faces) == 0: return None
+
+    for frame in faces:
+        (fx, fy, fw, fh) = frame
         face_img = image[fy:fy+fh,fx:fx+fw]
 
         id, confidence = recognizer.predict(face_img)
-
         if confidence >= 100: # Unknown face
             id = 0
 
         detected_user = users[id]
-        detected_user.observe((image.shape[1], image.shape[0]), detected_face, face_img)
+        detected_user.observe((image.shape[1], image.shape[0]), frame, face_img)
         updated_face_id = id
 
-    return updated_face_id
+    return np.argmax(faces[:,2])
 
 if __name__ == "__main__":
     cv.startWindowThread()
