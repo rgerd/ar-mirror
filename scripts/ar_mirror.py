@@ -4,7 +4,7 @@ from camera_reader import CameraReader
 from ui_render import render_ui
 
 RENDER_SIZE = (640, 400)
-SCREEN_SIZE = (1280, 800)
+SCREEN_SIZE = (1080, 800) # 1920
 
 def main_loop(camera):
     frame = camera.get_frame()
@@ -23,6 +23,7 @@ if __name__ == "__main__":
     cv.startWindowThread()
     cv.namedWindow('image')
     cv.setWindowProperty('image', 0, 1)
+    cv.moveWindow('image', -SCREEN_SIZE[0], 0)
 
     camera = CameraReader(True)
 
