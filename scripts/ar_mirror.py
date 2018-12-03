@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 import cv2 as cv
 from camera_reader import CameraReader
@@ -26,14 +27,15 @@ def main_loop(camera):
 
     user_id = update_face(frame, MIN_FACE_SIZE)
 
-    # render
     screen = np.zeros((RENDER_SIZE[1], RENDER_SIZE[0], 3), dtype=np.uint8)
-    cv.rectangle(screen, (0, 0), (RENDER_SIZE[0] - 2, RENDER_SIZE[1] - 2), (255, 255, 255), 3)
-    render_ui(screen)
+    # cv.rectangle(screen, (0, 0), (RENDER_SIZE[0] - 2, RENDER_SIZE[1] - 2), (255, 255, 255), 3)
+    
     if user_id is not None:
         user = users[user_id]
         # calculate perspective (assuming camera is center of mirror)
         render_ar(screen, PPI, user)
+        # print(user.get_settings().color_index)
+        render_ui(screen, user.get_settings())
 
     # display
     screen = cv.resize(screen, SCREEN_SIZE, interpolation=0)
@@ -50,26 +52,26 @@ def update_face(image, min_size):
        )
 
     if len(faces) == 0: return None
-
+    
     for frame in faces:
         (fx, fy, fw, fh) = frame
         face_img = image[fy:fy+fh,fx:fx+fw]
 
         id, confidence = recognizer.predict(face_img)
-        if confidence >= 100: # Unknown face
-            id = 0
-
-        detected_user = users[id]
-        detected_user.observe((image.shape[1], image.shape[0]), frame, face_img)
-        updated_face_id = id
+        if confidence < 100: # Known face
+            detected_user = users[id]
+            detected_user.observe((image.shape[1], image.shape[0]), frame, face_img)
+            updated_face_id = id
 
     return np.argmax(faces[:,2])
 
 if __name__ == "__main__":
+    local_mode = '--local' in sys.argv
+
     cv.startWindowThread()
     cv.namedWindow('image')
     cv.setWindowProperty('image', 0, 1)
-    cv.moveWindow('image', 0, -SCREEN_SIZE[1])
+    cv.moveWindow('image', 0, 0 if local_mode else -SCREEN_SIZE[1])
 
     camera = CameraReader(True)
 
