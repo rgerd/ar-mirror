@@ -4,8 +4,7 @@ import numpy as np
 def render_ar(screen, PPI, user):
     screen_height, screen_width, _ = screen.shape
     perspective = list(user.predicted_position.value())
-    color = user.color
-
+    color = (255, 255, 255)
     # fw, fh = user.measured_size
     render_menu(screen, PPI, perspective, color)
     render_face(screen, PPI, perspective, user.name, color)

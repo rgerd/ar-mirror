@@ -32,19 +32,10 @@ def render_ui(user, screen):
     screen_width = screen.shape[1]
     screen_height = screen.shape[0]
 
-    # render face display
-    color = user.get_distance_color()
-    filtered_color = user.get_distance_color(filter=True)
-
-    # calculate perspective (assuming camera is center of mirror)
-    (x, y, z) = user.predicted_position.value()
-
-    # nx, ny = user.nose
-
     nx, ny = user.action_detector.get_position()
     cv.putText(screen, "%.2f, %.2f" % (nx, ny),
             (10, 40), cv.FONT_HERSHEY_SIMPLEX,
-            2.0, (0, 255, 0), 3)
+            2.0, user.get_settings().get_color(), 3)
 
     cv.line(screen,
         (int(screen_width / 2 - 50), int(screen_height / 2)), 
