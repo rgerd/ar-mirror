@@ -2,17 +2,15 @@ import cv2 as cv
 import math
 from time import localtime, strftime
 
-user_color = (0, 255, 0)
-
 def extend_angle(center, angle, radius):
     angle -= math.pi / 2
     return (int(center[0] + math.cos(angle) * radius), int(center[1] + math.sin(angle) * radius))
 
-def render_ui(screen):
+def render_ui(screen, settings):
     h, w, _ = screen.shape
-    render_clock(screen, 25, 170)
+    render_clock(screen, 25, 170, settings.get_color())
 
-def render_clock(screen, x, y):
+def render_clock(screen, x, y, user_color):
     current_time = localtime()
     date_time  = strftime("%a, %d %b %Y", current_time)
     clock_time = strftime("%H:%M:%S", current_time)
