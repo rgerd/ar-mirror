@@ -26,7 +26,7 @@ def main_loop(camera):
     if frame is None: # Wait for next frame
         return
 
-    user_id = update_face(frame, MIN_FACE_SIZE)
+    user_id = update_faces(frame, MIN_FACE_SIZE)
 
     screen = np.zeros((RENDER_SIZE[1], RENDER_SIZE[0], 3), dtype=np.uint8)
     # cv.rectangle(screen, (0, 0), (RENDER_SIZE[0] - 2, RENDER_SIZE[1] - 2), (255, 255, 255), 3)
@@ -51,19 +51,48 @@ def update_face(image, min_size):
         minSize = min_size,
        )
 
-    if len(faces) == 0: return None
-    
+    if len(faces) != 0:
+        detected_face = max(faces, key=lambda f: f[2])
+        (fx, fy, fw, fh) = detected_face
+        face_img = image[fy:fy+fh,fx:fx+fw]
+
+        users[0].observe((image.shape[1], image.shape[0]), detected_face, face_img)
+
+    return 0
+
+def update_faces(image, min_size):
+    updated_face_id = None # Array of indices
+
+    faces = face_cascade.detectMultiScale(
+        image,
+        scaleFactor = 1.2,
+        minNeighbors = 5,
+        minSize = min_size,
+       )
+
+    if len(faces) == 0: 
+        print("No faces!")
+        return None
+
+    fattest_face_id = None
+    fattest_face_fatness = float('-inf')
+    face_index = 0
     for frame in faces:
         (fx, fy, fw, fh) = frame
         face_img = image[fy:fy+fh,fx:fx+fw]
 
         id, confidence = recognizer.predict(face_img)
-        if confidence < 100: # Known face
+        if confidence <= 100: # Known face
+            if fw >= fattest_face_fatness:
+                fattest_face_id = id
+                fattest_face_fatness = fw
             detected_user = users[id]
             detected_user.observe((image.shape[1], image.shape[0]), frame, face_img)
             updated_face_id = id
+        else:
+            print("Stranger danger!")
 
-    return np.argmax(faces[:,2])
+    return fattest_face_id # np.argmax(faces[:,2])
 
 if __name__ == "__main__":
     local_mode = '--local' in sys.argv

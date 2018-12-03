@@ -26,10 +26,12 @@ while(True):
         cv2.imwrite("data/dataset/" + str(face_id) + '.' + str(count) + ".jpg", gray[y:y+h,x:x+w])
         cv2.imshow('image', img)
 
+    print(count)
+
     k = cv2.waitKey(100) & 0xff # Press 'ESC' to exit data collection
     if k == 27:
         break
-    elif count >= 500: # Take 500 face samples and stop video
+    elif count >= 40:
          break
 
 # Do a bit of cleanup

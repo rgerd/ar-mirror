@@ -14,6 +14,8 @@ colors = [
     (255, 255, 255)
 ]
 
+keypoints_model = load_model('keypoints_model.h5')
+
 class Face:
     def __init__(self, name, color_index):
         self.name = name
@@ -23,12 +25,11 @@ class Face:
         self.predicted_position = Position(0, 0, 0)
         self.measured_size = (0, 0)
         self.nose = (0, 0)
-        self.keypoints_model = load_model('keypoints_model.h5')
         self.action_detector = ActionDetector(self._do_action)
 
     def _get_nose(self, face_img):
         resize_gray_crop = cv.resize(face_img, (96, 96)) / 255
-        landmarks = np.squeeze(self.keypoints_model.predict(np.expand_dims(np.expand_dims(resize_gray_crop, axis=-1), axis=0)))
+        landmarks = np.squeeze(keypoints_model.predict(np.expand_dims(np.expand_dims(resize_gray_crop, axis=-1), axis=0)))
         return (landmarks[20], landmarks[21])
 
     def _predict_position(self, frame_dim, face_rect):
