@@ -37,7 +37,7 @@ def main_loop(camera):
     # cv.rectangle(screen, (0, 0), (RENDER_SIZE[0] - 2, RENDER_SIZE[1] - 2), (255, 255, 255), 3)
 
     user_id = update_faces(frame, MIN_FACE_SIZE)
-    
+
     if user_id is not None:
         if user_id == current_user_id:
             frames_on_new_user = 0
@@ -48,9 +48,9 @@ def main_loop(camera):
             current_user_id = user_id
             current_user = users[user_id]
             frames_on_new_user = 0
-        
+
     if current_user_id is not None:
-        render_ar(screen, PPI, current_user)    
+        render_ar(screen, PPI, current_user)
         render_ui(screen, current_user.get_color())
 
     # display
@@ -86,7 +86,7 @@ def update_faces(image, min_size):
         minSize = min_size,
        )
 
-    if len(faces) == 0: 
+    if len(faces) == 0:
         return None
 
     fattest_face_id = None
@@ -104,7 +104,7 @@ def update_faces(image, min_size):
         detected_user = users[id]
         detected_user.observe((image.shape[1], image.shape[0]), frame, face_img)
         updated_face_id = id
-        
+
     return fattest_face_id
 
 if __name__ == "__main__":

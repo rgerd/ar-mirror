@@ -17,8 +17,9 @@ def render_face(screen, PPI, perspective, name, color):
     p = mirror_point(perspective, point)
     p = frame_to_pixel(screen, PPI, p)
     org = (int(p[0]), int(p[1]))
-    # cv.circle(screen, org, 5, (0,255,255), 2)
-    cv.putText(screen, name, org, cv.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
+    cv.circle(screen, org, int(32 - perspective[2]), color, 2)
+    center = (org[0] - 40, org[1] - 40)
+    cv.putText(screen, name, center, cv.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
 
 def render_menu(screen, PPI, perspective, color):
     obj = [[10, 10, -30],
