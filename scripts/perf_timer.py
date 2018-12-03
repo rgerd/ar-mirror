@@ -9,11 +9,13 @@ class PerfTimer:
 
     def log(self):
         durations = []
-        total_time = self.times[-1] - self.times[0]
-        for i in range(len(self.times)):
-            name = self.times[i + 1]
-            duration = round(self.times[i + 1] - self.times[i], 3)
-            percent = str(round((duration / total_time) * 100, 1)) + "%"
-            durations.append((name, duration, percent))
+        total_time = self.times[-1][1] - self.times[0][1]
 
-        print(durations)
+        for i in range(len(self.times) - 1):
+            name = self.times[i + 1][0]
+            duration = self.times[i + 1][1] - self.times[i][1]
+            pretty_duration = round(duration * 1000, 2)
+            percent = str(round((duration / total_time) * 100, 1)) + "%"
+            durations.append((name, pretty_duration, percent))
+
+        print(round(total_time * 1000, 2), durations)
