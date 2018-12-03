@@ -1,28 +1,41 @@
 import cv2 as cv
+import numpy as np
 
 def render_ar(screen, PPI, user):
     screen_height, screen_width, _ = screen.shape
     perspective = list(user.predicted_position.value())
-    print(perspective)
+    color = user.color
+
     # fw, fh = user.measured_size
+    render_menu(screen, PPI, perspective, color)
+    render_face(screen, PPI, perspective, user.name, color)
 
-    obj = list(perspective)
-    obj[2] = -obj[2]
-    render_menu(screen, PPI, perspective, obj)
+def render_face(screen, PPI, perspective, name, color):
+    # flip behind mirror
+    point = perspective[:]
+    point[2] = -point[2]
 
-def render_menu(screen, PPI, perspective, point):
-    loc = mirror_point(perspective, point)
-    loc = frame_to_pixel(screen, PPI, loc)
-    cv.circle(screen,
-        (int(loc[0]), int(loc[1])),
-        int(perspective[2]/ 4.),
-        (255, 255, 255),
-        2
-    )
+    p = mirror_point(perspective, point)
+    p = frame_to_pixel(screen, PPI, p)
+    org = (int(p[0]), int(p[1]))
+    # cv.circle(screen, org, 5, (0,255,255), 2)
+    cv.putText(screen, name, org, cv.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
+
+def render_menu(screen, PPI, perspective, color):
+    obj = [[10, 10, -30],
+           [10, 0, -30],
+           [15, 0, -30],
+           [15, 10, -30]]
+
+    obj = [mirror_point(perspective, p) for p in obj]
+    obj = [frame_to_pixel(screen, PPI, p) for p in obj]
+
+    pts = np.array(obj, np.int32)
+    pts = pts.reshape((-1,1,2))
+
+    cv.polylines(screen,[pts],True,color)
 
 def frame_to_pixel(screen, PPI, point):
-    PPI += 20 # ~M A G I C~
-
     # axis offset (only along y)
     point = list(point)
     point[1] -= 5

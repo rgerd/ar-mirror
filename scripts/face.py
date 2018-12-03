@@ -12,7 +12,9 @@ PIXELS_AT_STANDARD_DIST = 1.
 # eye_cascade = cv.CascadeClassifier('data/haarcascade_eye.xml')
 
 class Face:
-    def __init__(self):
+    def __init__(self, name, color):
+        self.name = name
+        self.color = color
         self.bounding_rect = None
         self.measured_position = Position(0, 0, 0)
         self.predicted_position = Position(0, 0, 0)

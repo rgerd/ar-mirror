@@ -2,7 +2,7 @@ import cv2 as cv
 import math
 from time import localtime, strftime
 
-user_color = (0, 255, 0)
+user_color = (255, 255, 255)
 
 def extend_angle(center, angle, radius):
     angle -= math.pi / 2

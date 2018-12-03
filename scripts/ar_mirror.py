@@ -10,14 +10,15 @@ SCREEN_SIZE = (1080, 1530)
 
 WIDTH, HEIGHT = CameraReader(True).get_img_dimensions()
 MIN_FACE_SIZE = (int(0.05 * WIDTH), int(0.05 * HEIGHT))
-PPI = 58.524
+PPI = 57
 
 recognizer = cv.face.LBPHFaceRecognizer_create()
 recognizer.read('data/trainer/trainer.yml')
 face_cascade = cv.CascadeClassifier('data/haarcascade_frontalface_default.xml')
 
-names = ['Jared', 'Robert', 'Unknown']
-users = [Face(), Face(), Face()]
+users = [Face('Jared', (255, 255, 255)),
+         Face('Robert', (0, 255, 255)),
+         Face('Unknown', (0, 0, 0))]
 
 def main_loop(camera):
     frame = camera.get_frame()
