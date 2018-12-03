@@ -48,7 +48,7 @@ def render_ui(user, screen):
         (255, 255, 255), 1)
 
     cv.circle(screen, 
-        (int(nx + screen_width / 2), int(ny + screen_height / 2)), 
+        (int(nx * 2 + screen_width / 2), int(ny * 3 + screen_height / 2)), 
         5, (255, 255, 255), 2)
 
 def main_loop(camera, mirror_mode):

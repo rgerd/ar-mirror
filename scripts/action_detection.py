@@ -37,9 +37,9 @@ class ActionDetector:
         if px <= -3: # -7:
             self.last_seen_left = current_time
 
-        if py <= 0:
+        if py <= -4:
             self.last_seen_up = current_time
-        if py >= 5: # 6
+        if py >= 3.2 and self.last_seen_up != 0: # 6
             self.last_seen_down = current_time
 
         self.last_seen_up    = self.last_seen_up    if current_time - self.last_seen_up    < action_time_threshold else 0
@@ -57,7 +57,7 @@ class ActionDetector:
         elif self.last_seen_left != 0 and self.last_seen_right != 0:
             self.last_seen_left = 0 
             self.last_seen_right = 0
-            action = "shake"
+            # action = "shake"
 
         if action is not None and current_time - self.last_action_time > action_cooldown_time:
             self.last_action_time = current_time
