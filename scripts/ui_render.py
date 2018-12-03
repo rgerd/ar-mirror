@@ -67,3 +67,4 @@ def render_clock(screen, x, y):
     cv.putText(screen, date_time,
         (x, y), cv.FONT_HERSHEY_SIMPLEX,
         0.8, user_color, 2)
+
