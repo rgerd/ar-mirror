@@ -37,10 +37,10 @@ class ActionDetector:
         stdv_vy = np.std(self.vy_hist) * 100
         mean_vy = np.mean(self.vy_hist) * 100
 
-        if stdv_x > 30 and abs(mean_vx) < 100:
+        if stdv_vx > 30 and abs(mean_vx) < 100:
             self.callback("shake")
             self._clear_histories()
-        elif stdv_y > 25 and abs(mean_vy) < 100:
+        elif stdv_vy > 25 and abs(mean_vy) < 100:
             self.callback("nod")
             self._clear_histories()
 
