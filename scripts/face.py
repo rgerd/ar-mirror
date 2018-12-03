@@ -4,6 +4,29 @@ from position import Position
 from action_detection import ActionDetector
 from keras.models import load_model
 
+colors = [
+    (255, 0, 0),
+    (0, 255, 0),
+    (0, 0, 255),
+    (255, 0, 255),
+    (255, 255, 0),
+    (0, 255, 255),
+    (255, 255, 255)
+]
+class Settings:
+    def __init__(self):
+        print("INIT SETTINGS")
+        self.color_index = 0
+
+    def switch_color(self, inc):
+        self.color_index += inc
+        if self.color_index < 0:
+            self.color_index += len(colors)
+        self.color_index %= len(colors)
+
+    def get_color(self):
+        return colors[self.color_index]
+
 class Face:
     def __init__(self):
         self.bounding_rect = None
@@ -13,6 +36,7 @@ class Face:
         self.nose = (0, 0)
         self.keypoints_model = load_model('keypoints_model.h5')
         self.action_detector = ActionDetector(self._do_action)
+        self.settings = Settings()
 
     def _get_nose(self, face_img):
         resize_gray_crop = cv.resize(face_img, (96, 96)) / 255
@@ -56,22 +80,13 @@ class Face:
         self.measured_size = (int(face_rect[2]), int(face_rect[3]))
         self.action_detector.update(self.nose)
 
-    def get_distance_color(self, filter=False):
-        if filter:
-            (_, _, face_dist) = self.filtered_position.value()
-        else:
-            face_dist = self.measured_position.z
-
-        face_dist = face_dist - 3 # Pretty standard distance
-
-        closeness = min(-min(0, face_dist * 2), 1)
-        farness = min(max(0, face_dist * 2), 1)
-        perfectness = 1 - min(np.square(face_dist) * 2, 1)
-
-        return (int(farness * 255),int(perfectness * 255),int(closeness * 255))
-
     def _do_action(self, action):
         if action == "nod":
-            print("OH YEAH")
+            self.settings.switch_color(1)
         elif action == "shake":
-            print("OH NO")
+            self.settings.switch_color(-1)
+
+        return self.settings.color_index
+
+    def get_settings(self):
+        return self.settings
