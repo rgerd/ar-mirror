@@ -9,7 +9,7 @@ face_cascade = cv.CascadeClassifier('data/haarcascade_frontalface_default.xml')
 
 font = cv.FONT_HERSHEY_SIMPLEX
 
-user = Face()
+user = Face("Robert", 0)
 
 def update_face(image, min_size):
     updated_face_id = None # Array of indices
@@ -35,7 +35,7 @@ def render_ui(user, screen):
     nx, ny = user.action_detector.get_position()
     cv.putText(screen, "%.2f, %.2f" % (nx, ny),
             (10, 40), cv.FONT_HERSHEY_SIMPLEX,
-            2.0, user.get_settings().get_color(), 3)
+            2.0, user.get_color(), 3)
 
     cv.line(screen,
         (int(screen_width / 2 - 50), int(screen_height / 2)), 

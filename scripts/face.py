@@ -13,24 +13,11 @@ colors = [
     (0, 255, 255),
     (255, 255, 255)
 ]
-class Settings:
-    def __init__(self):
-        print("INIT SETTINGS")
-        self.color_index = 0
-
-    def switch_color(self, inc):
-        self.color_index += inc
-        if self.color_index < 0:
-            self.color_index += len(colors)
-        self.color_index %= len(colors)
-
-    def get_color(self):
-        return colors[self.color_index]
 
 class Face:
-    def __init__(self, name, color):
+    def __init__(self, name, color_index):
         self.name = name
-        self.color = color
+        self.color_index = color_index
         self.bounding_rect = None
         self.measured_position = Position(0, 0, 0)
         self.predicted_position = Position(0, 0, 0)
@@ -38,7 +25,6 @@ class Face:
         self.nose = (0, 0)
         self.keypoints_model = load_model('keypoints_model.h5')
         self.action_detector = ActionDetector(self._do_action)
-        self.settings = Settings()
 
     def _get_nose(self, face_img):
         resize_gray_crop = cv.resize(face_img, (96, 96)) / 255
@@ -84,11 +70,13 @@ class Face:
 
     def _do_action(self, action):
         if action == "nod":
-            self.settings.switch_color(1)
+            color_increment = 1
         elif action == "shake":
-            self.settings.switch_color(-1)
+            color_increment = -1
+        self.color_index += color_increment
+        if self.color_index < 0:
+            self.color_index += len(colors)
+        self.color_index %= len(colors)
 
-        return self.settings.color_index
-
-    def get_settings(self):
-        return self.settings
+    def get_color(self):
+        return colors[self.color_index]

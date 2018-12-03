@@ -61,7 +61,7 @@ class ActionDetector:
 
         if action is not None and current_time - self.last_action_time > action_cooldown_time:
             self.last_action_time = current_time
-            print(action, self.callback(action))
+            self.callback(action)
 
     # For debugging
     def get_position(self):

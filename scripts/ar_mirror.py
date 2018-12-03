@@ -17,9 +17,9 @@ recognizer = cv.face.LBPHFaceRecognizer_create()
 recognizer.read('data/trainer/trainer.yml')
 face_cascade = cv.CascadeClassifier('data/haarcascade_frontalface_default.xml')
 
-users = [Face('Jared', (255, 255, 255)),
-         Face('Robert', (0, 255, 255)),
-         Face('Unknown', (0, 0, 0))]
+users = [Face('Jared', 0),
+         Face('Robert', 0),
+         Face('Unknown', 0)]
 
 def main_loop(camera):
     frame = camera.get_frame()
@@ -35,8 +35,7 @@ def main_loop(camera):
         user = users[user_id]
         # calculate perspective (assuming camera is center of mirror)
         render_ar(screen, PPI, user)
-        # print(user.get_settings().color_index)
-        render_ui(screen, user.get_settings())
+        render_ui(screen, user.get_color())
 
     # display
     screen = cv.resize(screen, SCREEN_SIZE, interpolation=0)

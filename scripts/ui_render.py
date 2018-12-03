@@ -8,9 +8,9 @@ def extend_angle(center, angle, radius):
     angle -= math.pi / 2
     return (int(center[0] + math.cos(angle) * radius), int(center[1] + math.sin(angle) * radius))
 
-def render_ui(screen, settings):
+def render_ui(screen, user_color):
     h, w, _ = screen.shape
-    render_clock(screen, 25, 170, settings.get_color())
+    render_clock(screen, 25, 170, user_color)
 
 def render_clock(screen, x, y, user_color):
     current_time = localtime()

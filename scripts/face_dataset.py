@@ -29,7 +29,7 @@ while(True):
     k = cv2.waitKey(100) & 0xff # Press 'ESC' to exit data collection
     if k == 27:
         break
-    elif count >= 120: # Take 120 face samples and stop video
+    elif count >= 500: # Take 500 face samples and stop video
          break
 
 # Do a bit of cleanup
