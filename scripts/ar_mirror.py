@@ -3,8 +3,8 @@ import cv2 as cv
 from camera_reader import CameraReader
 from ui_render import render_ui
 
-RENDER_SIZE = (640, 400)
-SCREEN_SIZE = (1080, 1700)
+RENDER_SIZE = (540, 765)
+SCREEN_SIZE = (1080, 1530)
 
 def main_loop(camera):
     frame = camera.get_frame()
