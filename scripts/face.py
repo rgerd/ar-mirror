@@ -1,15 +1,8 @@
 import numpy as np
 import cv2 as cv
-from position import Position, KalmanPosition
+from position import Position
 from action_detection import ActionDetector
-import time
-import datetime
-
-# import matplotlib.pyplot as plt
 from keras.models import load_model
-
-PIXELS_AT_STANDARD_DIST = 1.
-# eye_cascade = cv.CascadeClassifier('data/haarcascade_eye.xml')
 
 class Face:
     def __init__(self):
@@ -17,7 +10,6 @@ class Face:
         self.measured_position = Position(0, 0, 0)
         self.predicted_position = Position(0, 0, 0)
         self.measured_size = (0, 0)
-        self.filtered_position = KalmanPosition()
         self.nose = (0, 0)
         self.keypoints_model = load_model('keypoints_model.h5')
         self.action_detector = ActionDetector(self._do_action)
@@ -37,7 +29,7 @@ class Face:
 
         z = (1.0 - face_size) * 32
 
-        # my estimation 5.5, internet: 7.1
+        # Average head width: my estimation 5.5, internet: 7.1
         cam_focal_length = 300.
 
         # Center x, y of face
@@ -55,7 +47,6 @@ class Face:
 
         self.measured_position = current_position
 
-        # self.filtered_position.observe(time.time(), self.measured_position)
         return predicted_position
 
     def observe(self, frame_dim, face_rect, face_img):
